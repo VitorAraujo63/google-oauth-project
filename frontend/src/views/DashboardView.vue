@@ -130,26 +130,27 @@ onMounted(() => {
             </thead>
             <tbody>
                 <tr v-for="user in users" :key="user.id">
-                <td>#{{ user.id }}</td>
-                <td>
+                <td data-label="ID">#{{ user.id }}</td>
+                
+                <td data-label="Usuário">
                     <div class="user-cell">
-                      <img 
-                          v-if="user.avatar" 
-                          :src="user.avatar" 
-                          alt="Avatar" 
-                          class="avatar-img"
-                          @error="user.avatar = undefined" 
-                      >
-                      <div v-else class="mini-avatar">
-                          {{ user.name.charAt(0).toUpperCase() }}
-                      </div>
-                      
-                      <span class="user-name">{{ user.name }}</span>
-                  </div>
+                        <img 
+                            v-if="user.avatar" 
+                            :src="user.avatar" 
+                            alt="Avatar" 
+                            class="avatar-img"
+                            @error="user.avatar = undefined" 
+                        >
+                        <div v-else class="mini-avatar">
+                            {{ user.name.charAt(0).toUpperCase() }}
+                        </div>
+                        <span class="user-name">{{ user.name }}</span>
+                    </div>
                 </td>
-                <td>{{ user.cpf || '-' }}</td>
-                <td>{{ user.birth_date ? new Date(user.birth_date).toLocaleDateString('pt-BR') : '-' }}</td>
-                <td>{{ user.email }}</td>
+                
+                <td data-label="CPF">{{ user.cpf || '-' }}</td>
+                <td data-label="Nascimento">{{ user.birth_date ? new Date(user.birth_date).toLocaleDateString('pt-BR') : '-' }}</td>
+                <td data-label="Email">{{ user.email }}</td>
                 </tr>
             </tbody>
             </table>
@@ -297,4 +298,101 @@ $bg-color: #f4f6f8;
 
 .skeleton-wrapper { padding: 1rem; .skeleton-header { height: 40px; background: #eee; margin-bottom: 1rem; border-radius: 4px; } .skeleton-row { display: flex; gap: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 0.5rem; } .skeleton-cell { height: 20px; background: #eee; border-radius: 4px; position: relative; overflow: hidden; &::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; transform: translateX(-100%); background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0)); animation: shimmer 2s infinite; } } .w-small { width: 5%; } .w-medium { width: 20%; } .w-large { width: 35%; } }
 @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+@media (max-width: 768px) {
+    
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        
+        .user-profile {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    .content {
+        padding: 1rem; // Menos padding nas laterais
+    }
+
+    .pagination-footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        
+        .pagination-controls {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    // --- TRANSFORMAÇÃO TABELA -> CARDS ---
+    .table-card {
+        background: transparent; // Remove fundo branco do container geral
+        box-shadow: none;
+
+        table, thead, tbody, th, td, tr {
+            display: block; // Faz tudo virar bloco empilhado
+        }
+
+        // Esconde o cabeçalho da tabela (ID, Nome, CPF...)
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        tr {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1rem; // Espaço entre os "cards"
+            padding: 1rem;
+            border: 1px solid #eee;
+        }
+
+        td {
+            border: none;
+            position: relative;
+            padding-left: 0;
+            padding-right: 0;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f5f5f5;
+            text-align: right;
+            
+            // Pega o valor do 'data-label' e escreve na tela como um título
+            &::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #666;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                margin-right: 1rem;
+                text-align: left;
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+
+        td[data-label="Usuário"] {
+            justify-content: flex-start;
+            background: #fafafa;
+            margin: -1rem -1rem 1rem -1rem; 
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            border-radius: 8px 8px 0 0;
+
+            &::before {
+                display: none;
+            }
+        }
+    }
+}
 </style>
