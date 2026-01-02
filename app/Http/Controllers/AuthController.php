@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\CompleteRegistrationRequest;
 
 class AuthController extends Controller
 {
@@ -30,8 +31,6 @@ class AuthController extends Controller
 
             $token = $data['token'];
 
-            // Redireciona para o Front-end passando o token na URL
-            // O Vue vai ler ?token=XYZ, salvar no localStorage e limpar a URL
             $frontendUrl = config('app.frontend_url') . '/auth/callback';
 
             return redirect("{$frontendUrl}?token={$token}");
@@ -40,5 +39,18 @@ class AuthController extends Controller
             // Se der erro, manda pro login do front com erro
             return redirect(config('app.frontend_url') . '/login?error=auth_failed');
         }
+    }
+
+    public function completeRegistration(CompleteRegistrationRequest $request): JsonResponse
+    {
+        $user = $this->authService->completeRegistration(
+            $request->user(),
+            $request->validated()
+        );
+
+        return response()->json([
+            'message' => 'Registration completed successfully',
+            'user' => $user
+        ]);
     }
 }

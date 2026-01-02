@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\UserController;
 
 Route::get('/auth/google/url', [AuthController::class, 'getGoogleAuthUrl']);
 
@@ -24,5 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'Logged out']);
     });
 
-    // Route::post('/auth/complete-registration', [AuthController::class, 'completeRegistration']);
+    Route::post('/auth/complete-registration', [AuthController::class, 'completeRegistration']);
+
+
+    Route::get('/users', [UserController::class, 'index']);
 });

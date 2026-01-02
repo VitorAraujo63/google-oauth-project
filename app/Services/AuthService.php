@@ -49,4 +49,13 @@ class AuthService
             'token' => $token
         ];
     }
+
+    /**
+     * Recebe o usuário atual e os dados do formulário (CPF/Data)
+     * e delega para o repositório salvar.
+     */
+    public function completeRegistration(\App\Models\User $user, array $data): \App\Models\User
+    {
+        return $this->userRepository->completeRegistration($user->id, $data);
+    }
 }

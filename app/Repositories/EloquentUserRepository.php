@@ -26,10 +26,19 @@ class EloquentUserRepository implements UserRepositoryInterface
         );
     }
 
-    public function completeRegistration(int $id, array $data)
+    public function completeRegistration(int $id, array $data): \App\Models\User
     {
         $user = User::find($id);
-        $user->update($data);
+
+        if (!$user) {
+            throw new \Exception("Usuário não encontrado.");
+        }
+
+        $user->update([
+            'cpf' => $data['cpf'],
+            'birth_date' => $data['birth_date'],
+        ]);
+
         return $user;
     }
 
