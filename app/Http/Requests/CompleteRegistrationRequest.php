@@ -6,34 +6,38 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CompleteRegistrationRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        // Retorna true porque o usuário já está logado via Sanctum
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * PREPARE FOR VALIDATION
+     * Isso roda ANTES das regras. Aqui removemos a máscara.
+     * O 'cpf' chega '111.222.333-44' e vira '11122233344'
      */
+    protected function prepareForValidation()
+    {
+        if ($this->has('cpf')) {
+            $this->merge([
+                'cpf' => preg_replace('/\D/', '', $this->cpf),
+            ]);
+        }
+    }
+
     public function rules(): array
     {
         return [
-            'cpf' => 'required|string|min:11|max:14|unique:users,cpf',
-            'birth_date' => 'required|date|before:today',
+            'cpf' => ['required', 'digits:11', 'unique:users,cpf,' . $this->user()->id],
+            'birth_date' => ['required', 'date', 'before:today'],
         ];
     }
 
-    /**
-     * Mensagens personalizadas (Opcional, mas bom para UX)
-     */
     public function messages(): array
     {
         return [
-            'cpf.unique' => 'Este CPF já está sendo utilizado por outro usuário.',
-            'cpf.size' => 'O CPF deve conter 14 caracteres.',
+            'cpf.digits' => 'O CPF deve conter exatamente 11 números.',
+            'cpf.unique' => 'Este CPF já está em uso.',
             'birth_date.before' => 'A data de nascimento deve ser válida.',
         ];
     }

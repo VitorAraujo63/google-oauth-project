@@ -16,14 +16,12 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    // Vue chama essa rota para saber para onde mandar o usuário
     public function getGoogleAuthUrl(): JsonResponse
     {
         $url = $this->authService->getGoogleAuthUrl();
         return response()->json(['url' => $url]);
     }
 
-    // Google devolve o usuário para cá
     public function handleGoogleCallback(): RedirectResponse
     {
         try {
@@ -36,7 +34,6 @@ class AuthController extends Controller
             return redirect("{$frontendUrl}?token={$token}");
 
         } catch (\Exception $e) {
-            // Se der erro, manda pro login do front com erro
             return redirect(config('app.frontend_url') . '/login?error=auth_failed');
         }
     }

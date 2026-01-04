@@ -1,0 +1,38 @@
+:root {
+    --bg-app: #F5F7FA;
+    --bg-card: #FFFFFF;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --border-color: #E0E0E0;
+    --input-bg: #FFFFFF;
+    --shadow-card: 0 2px 10px rgba(0,0,0,0.05);
+
+    --color-primary: #333333;
+    --color-danger: #D32F2F;
+}
+
+
+[data-theme="dark"] {
+    --bg-app: #121212;
+    --bg-card: #1E1E1E;
+    --text-primary: #E0E0E0;
+    --text-secondary: #A0A0A0;
+    --border-color: #333333;
+    --input-bg: #2C2C2C;
+    --shadow-card: none;
+}
+
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-app); }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+button { cursor: pointer; font-family: inherit; }

@@ -28,7 +28,6 @@ class AuthService
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
 
-        // Prepara os dados limpos para o repositório
         $data = [
             'name' => $googleUser->getName(),
             'email' => $googleUser->getEmail(),
@@ -38,10 +37,8 @@ class AuthService
             'google_refresh_token' => $googleUser->refreshToken,
         ];
 
-        // Chama o repositório para salvar
         $user = $this->userRepository->updateOrCreateGoogleUser($data);
 
-        // Gera o token do Sanctum (o passaporte para o Vue)
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [

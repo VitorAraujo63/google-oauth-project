@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import api from '@/services/api';
-import type { AxiosError } from 'axios';
 
 export interface User {
   id: number;
@@ -11,6 +10,8 @@ export interface User {
   cpf?: string;
   birth_date?: string;
 }
+
+export const userState = ref(null);
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('auth_token'));
@@ -32,8 +33,9 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function fetchUser() {
     try {
-      const { data } = await api.get('http://localhost:80/api/me');
+      const { data } = await api.get('/me');
       user.value = data;
+      userState.value = data;
       return data;
     } catch (error) {
       console.error('Falha ao buscar usuário', error);
