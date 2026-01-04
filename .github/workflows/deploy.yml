@@ -73,7 +73,6 @@ jobs:
             php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
-            php artisan view:cache
 
             # precisamos garantir que o Nginx (www-data) consiga ler tudo novamente.
             echo "🔒 Ajustando permissões finais..."
