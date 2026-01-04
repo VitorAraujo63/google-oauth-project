@@ -11,7 +11,7 @@ export interface User {
   birth_date?: string;
 }
 
-export const userState = ref(null);
+export const userState = ref<User | null>(null);
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('auth_token'));
