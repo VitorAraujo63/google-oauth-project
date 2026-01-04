@@ -1,0 +1,84 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependências e Buildar
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Guardar o Artifact (Salva a pasta dist para usar depois)
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 1
+
+  deploy:
+    needs: build-frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o Artifact (Pega a pasta dist criada no Job anterior)
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist-temp
+
+      - name: Enviar Frontend para VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "dist-temp/*"
+          target: "/var/www/html/google-oauth-project/frontend/dist"
+          strip_components: 1
+
+      - name: Atualizar Backend e Permissões
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            echo "🚀 Iniciando atualização do Backend..."
+
+            cd /var/www/html/google-oauth-project
+
+            git fetch --all
+            git reset --hard origin/main
+            git pull origin main
+
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # precisamos garantir que o Nginx (www-data) consiga ler tudo novamente.
+            echo "🔒 Ajustando permissões finais..."
+            chown -R www-data:www-data /var/www/html/google-oauth-project
+            chmod -R 775 storage bootstrap/cache
+
+            sudo service nginx reload
+
+            echo "✅ Deploy Seguro Finalizado!"
