@@ -68,6 +68,7 @@ jobs:
             git reset --hard origin/main
             git pull origin main
 
+            export COMPOSER_ALLOW_SUPERUSER=1
             composer install --no-dev --optimize-autoloader
             php artisan migrate --force
             php artisan config:cache
