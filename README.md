@@ -29,7 +29,7 @@ Este projeto é uma solução completa Fullstack (API Laravel + Frontend Vue.js)
 
 Para rodar este projeto, você precisa ter instalado em sua máquina:
 
-* **Opção Docker (Recomendada):** Docker e Docker Compose.
+* **Opção Docker (Recomendada):** Docker, Docker Compose e Node.js 20+.
 * **Opção Nativa:** PHP 8.2+, Composer, Node.js 20+, MySQL.
 
 ---
@@ -41,7 +41,9 @@ Você pode escolher rodar via **Docker (Laravel Sail)** ou **Nativamente**.
 
 ### Opção 1: Rodando com Docker (Laravel Sail)
 
-Esta é a forma mais simples, pois não requer PHP/Node instalados na máquina host.
+Esta é a forma mais simples, pois não requer PHP instalado na máquina host.
+
+- ### Antes de iniciar recomendo passar pela seção de [Variaveis de ambiente](https://github.com/VitorAraujo63/google-oauth-project?tab=readme-ov-file#configura%C3%A7%C3%A3o-do-google-oauth-e-e-mail)
 
 1.  **Clone o repositório:**
     ```bash
@@ -97,6 +99,8 @@ Esta é a forma mais simples, pois não requer PHP/Node instalados na máquina h
 ### Opção 2: Rodando Nativamente (Diretamente na Máquina)
 
 Caso prefira rodar sem Docker e já tenha o ambiente configurado.
+
+- ### Antes de iniciar recomendo passar pela seção de [Variaveis de ambiente](https://github.com/VitorAraujo63/google-oauth-project?tab=readme-ov-file#configura%C3%A7%C3%A3o-do-google-oauth-e-e-mail)
 
 1.  **Backend (API):**
     ```bash
@@ -159,6 +163,18 @@ MAIL_PASSWORD=sua_senha_de_app
 MAIL_ENCRYPTION=tls
 
 QUEUE_CONNECTION=database
+```
+
+### 3. Reconhecimento da API (Front-end)
+Para que a api seja reconhecida no frontend é preciso configurar o .env dentro do "/frontend"
+
+```
+cd /frontend
+
+cp .env.example .env
+
+#.env
+VITE_API_BASE_URL=http://localhost:80/api
 ```
 ---
 
