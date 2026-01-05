@@ -30,8 +30,8 @@ class EloquentUserRepository implements UserRepositoryInterface
     {
         $user = User::find($id);
 
-        if (!$user) {
-            throw new \Exception("Usuário não encontrado.");
+        if (! $user) {
+            throw new \Exception('Usuário não encontrado.');
         }
 
         $user->update([
@@ -46,17 +46,17 @@ class EloquentUserRepository implements UserRepositoryInterface
     {
         $query = User::query();
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $numbersOnly = preg_replace('/\D/', '', $search);
 
-            $query->where(function($q) use ($search, $numbersOnly) {
-                if (!empty($numbersOnly) && strlen($numbersOnly) <= 4) {
+            $query->where(function ($q) use ($search, $numbersOnly) {
+                if (! empty($numbersOnly) && strlen($numbersOnly) <= 4) {
                     $q->orWhere('cpf', 'like', "{$numbersOnly}%");
                 }
 
                 $q->orWhere('name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 

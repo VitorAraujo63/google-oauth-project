@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Http\Resources\UserResource;
-use App\Models\User;
 
 class UserController extends Controller
 {

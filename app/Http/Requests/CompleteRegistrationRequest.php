@@ -28,7 +28,7 @@ class CompleteRegistrationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cpf' => ['required', 'digits:11', 'unique:users,cpf,' . $this->user()->id],
+            'cpf' => ['required', 'digits:11', 'unique:users,cpf,'.$this->user()->id],
             'birth_date' => ['required', 'date', 'before:today'],
         ];
     }

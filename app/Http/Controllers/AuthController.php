@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompleteRegistrationRequest;
+use App\Http\Resources\UserResource;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\CompleteRegistrationRequest;
-use App\Http\Resources\UserResource;
-use App\Jobs\SendWelcomeEmailJob;
 
 class AuthController extends Controller
 {
@@ -21,6 +20,7 @@ class AuthController extends Controller
     public function getGoogleAuthUrl(): JsonResponse
     {
         $url = $this->authService->getGoogleAuthUrl();
+
         return response()->json(['url' => $url]);
     }
 
@@ -31,12 +31,12 @@ class AuthController extends Controller
 
             $token = $data['token'];
 
-            $frontendUrl = config('app.frontend_url') . '/auth/callback';
+            $frontendUrl = config('app.frontend_url').'/auth/callback';
 
             return redirect("{$frontendUrl}?token={$token}");
 
         } catch (\Exception $e) {
-            return redirect(config('app.frontend_url') . '/login?error=auth_failed');
+            return redirect(config('app.frontend_url').'/login?error=auth_failed');
         }
     }
 
@@ -49,7 +49,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Cadastro concluído',
-            'user' => new UserResource($user)
+            'user' => new UserResource($user),
         ]);
     }
 }

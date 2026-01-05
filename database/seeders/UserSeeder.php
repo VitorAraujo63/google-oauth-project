@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
 class UserSeeder extends Seeder
 {
@@ -27,10 +27,10 @@ class UserSeeder extends Seeder
             for ($j = 0; $j < $batchSize; $j++) {
                 $data[] = [
                     'name' => $faker->name,
-                    'email' => $faker->unique()->userName . $i . $j . '@example.com',
+                    'email' => $faker->unique()->userName.$i.$j.'@example.com',
                     'google_id' => Str::random(21),
                     'google_token' => Str::random(50),
-                    'avatar' => 'https://i.pravatar.cc/150?u=' . md5($faker->unique()->userName . $i . $j),
+                    'avatar' => 'https://i.pravatar.cc/150?u='.md5($faker->unique()->userName.$i.$j),
                     'cpf' => $faker->cpf(false),
                     'birth_date' => $faker->date('Y-m-d', '-18 years'),
                     'created_at' => now(),

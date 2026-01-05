@@ -17,7 +17,7 @@ class UserResource extends JsonResource
         $cpfLimpo = preg_replace('/\D/', '', $this->cpf);
 
         $cpfMascarado = $cpfLimpo
-            ? substr($cpfLimpo, 0, 3) . '.' . substr($cpfLimpo, 3, 1) . '**.***-**'
+            ? substr($cpfLimpo, 0, 3).'.'.substr($cpfLimpo, 3, 1).'**.***-**'
             : null;
 
         return [
