@@ -44,11 +44,8 @@ class AuthController extends Controller
     {
         $user = $this->authService->completeRegistration(
             $request->user(),
-            $validatedData = $request->validated()
+            $request->validated()
         );
-
-        $user->update($validatedData);
-        SendWelcomeEmailJob::dispatch($user);
 
         return response()->json([
             'message' => 'Cadastro concluído',

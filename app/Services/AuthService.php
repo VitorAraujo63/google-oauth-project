@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Jobs\SendWelcomeEmailJob;
+use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -51,8 +53,13 @@ class AuthService
      * Recebe o usuário atual e os dados do formulário (CPF/Data)
      * e delega para o repositório salvar.
      */
-    public function completeRegistration(\App\Models\User $user, array $data): \App\Models\User
+    public function completeRegistration(User $user, array $data): User
     {
-        return $this->userRepository->completeRegistration($user->id, $data);
+
+        $updatedUser = $this->userRepository->completeRegistration($user->id, $data);
+
+        SendWelcomeEmailJob::dispatch($updatedUser);
+
+        return $updatedUser;
     }
 }

@@ -1,220 +1,176 @@
+# Tray Fullstack Test - Google OAuth & User Management
 
-# Desafio Full Stack - Google Oauth
-> Solução completa para o desafio técnico Full Stack: API em Laravel + SPA em Vue.js. O sistema oferece login social (Google), complementação de dados sensíveis (CPF, data de nascimento) e exibição performática de grandes volumes de dados (150.000+ usuários).
+Este projeto é uma solução completa Fullstack (API Laravel + Frontend Vue.js) para gerenciamento de usuários com autenticação social via Google, atendendo aos requisitos do teste técnico para Desenvolvedor Full Stack.
 
----
+## Tecnologias e Arquitetura
 
-## 🚀 Visão Geral
-
-Este repositório contém:
-
-- Backend: API RESTful construída com **Laravel 12** (PHP 8.4+), MySQL
-- Frontend: SPA em **Vue 3** (Composition API + TypeScript) construída com Vite.
-- Autenticação via **Login Social (Google OAuth)**.
-- Preparado para trabalhar com grandes volumes de dados (seed com 150.000 usuários).
-- Containerizado com **Docker** e **Laravel Sail** para facilitar o desenvolvimento local.
+* **Backend:** PHP 8.3, Laravel 12
+* **Frontend:** Vue.js 3, TypeScript, Pinia, Sass
+* **Banco de Dados:** MySQL 8
+* **Infraestrutura:** Docker & Laravel Sail
+* **Design Patterns:** Service Layer, Repository Pattern, Dependency Injection
+* **Filas (Queues):** Processamento assíncrono para envio de e-mails
 
 ---
 
-## 🧩 Principais Funcionalidades
+## Pré-requisitos
 
-- Login social com Google (OAuth) e persistência do token de acesso.
-- Fluxo em duas etapas para completar cadastro: primeiro login social, depois complemento com CPF e data de nascimento.
-- Paginação e buscas performáticas por nome / CPF (índices compostos no banco).
-- UI responsiva com debounce em buscas, skeletons (loading states) e toasts de notificação.
-- Triggers e filas assíncronas com Redis para processamentos demorados.
-- Seed de 150.000 usuários para testes de performance.
+Para rodar este projeto, você precisa ter instalado em sua máquina:
+
+* **Opção Docker (Recomendada):** Docker e Docker Compose.
+* **Opção Nativa:** PHP 8.2+, Composer, Node.js 20+, MySQL.
 
 ---
 
-## 🏗 Arquitetura e Decisões Técnicas
+## Como Rodar o Projeto
 
-- Padrão Service-Repository:
-  - Service Layer: regras de negócio (ex.: processamento do callback do Google).
-  - Repository Layer: abstração do acesso ao banco, facilitando testes e mudanças futuras no storage/ORM.
-- Performance:
-  - Índices compostos nas colunas de busca (`name`, `cpf`) para evitar full table scans.
-  - Paginação consistente na API para reduzir uso de memória.
-- Autenticação:
-  - Integração com a biblioteca oficial `googleapis/google-api-php-client`.
-  - Token de acesso persistido para permitir continuidade do cadastro em etapas.
-- Frontend:
-  - Vue Router com Guards para rotas protegidas.
-  - Pinia para gerenciamento de estado.
-  - Debounce nas buscas e componentes de feedback visual.
 
----
+Você pode escolher rodar via **Docker (Laravel Sail)** ou **Nativamente**.
 
-## 🛠️ Como Rodar o Projeto
+### Opção 1: Rodando com Docker (Laravel Sail)
 
-Este projeto utiliza **Docker** e **Laravel Sail**. Você **não precisa** ter PHP ou Composer instalados na sua máquina local, apenas o Docker.
+Esta é a forma mais simples, pois não requer PHP/Node instalados na máquina host.
 
-### Pré-requisitos
-- **Docker** e **Docker Compose** instalados e rodando.
-- **Node.js** (versão 18+ recomendada) e **NPM/Yarn** (para o Frontend).
-- Credenciais do Google Cloud Console (Client ID e Secret).
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/VitorAraujo63/google-oauth-project.git
+    cd google-oauth-project
+    ```
 
----
+2.  **Configure o Backend:**
+    ```bash
+    # Copie o arquivo de ambiente
+    cp .env.example .env
 
-### Passo 1: Configuração do Backend (API)
+    # Instale as dependências do PHP (via container temporário)
+    docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "$(pwd):/var/www/html" \
+        -w /var/www/html \
+        laravelsail/php83-composer:latest \
+        composer install --ignore-platform-reqs
 
-1. **Clone o repositório e entre na pasta da API:**
-   ```bash
-   git clone <URL_DO_SEU_REPOSITORIO>
-   cd api
-   ```
-   Configure as variáveis de ambiente: Faça uma cópia do arquivo de exemplo.
+    # Ou se tiver o composer em sua maquina siga dessa maneira
+    composer install
+    ```
 
-   ```bash
-   cp .env.example .env
-   ```
+3.  **Suba os containers:**
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
 
-   Instale as dependências (Bootstrap do Sail): Como a pasta vendor ainda não existe, usaremos um container Docker temporário para rodar o Composer e instalar o Laravel Sail e as outras dependências.
+4.  **Gere a chave e rode as migrações:**
+    ```bash
+    ./vendor/bin/sail artisan key:generate
+    ./vendor/bin/sail artisan migrate
+    ```
 
-   Rode este comando no terminal (pode demorar alguns minutos dependendo da sua internet):
+5.  **Configure o Frontend:**
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    # O frontend estará disponível em http://localhost:5174
+    ```
 
-   ```bash
-   docker run --rm \
-       -u "$(id -u):$(id -g)" \
-       -v "$(pwd):/var/www/html" \
-       -w /var/www/html \
-       laravelsail/php84-composer:latest \
-       composer install --ignore-platform-reqs
-   ```
-
-   Suba o ambiente (Sail): Agora que as dependências foram instaladas, o executável do Sail está disponível.
-
-   ```bash
-   ./vendor/bin/sail up -d
-   ```
-
-   Gere a chave da aplicação e configure o Google:
-
-   ```bash
-   ./vendor/bin/sail artisan key:generate
-   ```
-
-   Agora, abra o arquivo .env no seu editor e preencha as credenciais do Google:
-
-   Code snippet
-   ```env
-   GOOGLE_CLIENT_ID=seu_client_id
-   GOOGLE_CLIENT_SECRET=seu_client_secret
-   GOOGLE_REDIRECT_URI=http://localhost/api/auth/google/callback
-   APP_FRONTEND_URL=http://localhost:5173
-   ```
-
-   Banco de Dados e Seeds (150k Usuários): Rode as migrações e o Seeder para popular o banco. Atenção: A geração de 150.000 registros pode levar alguns minutos.
-
-   ```bash
-   ./vendor/bin/sail artisan migrate --seed --class=UserSeeder
-   ```
-
-### Passo 2: Configuração do Frontend (Vue.js)
-
-Em um novo terminal, acesse a pasta do frontend:
-
-```bash
-cd frontend
-```
-
-Crie o arquivo de ambiente: Crie um arquivo chamado `.env.local` na raiz da pasta frontend e adicione:
-
-Code snippet
-```env
-VITE_API_BASE_URL=http://localhost/api
-```
-
-Instale as dependências e rode o projeto:
-
-```bash
-npm install
-npm run dev
-```
-
-### Passo 3: Acessar o Projeto
-
-Frontend (Aplicação): Acesse http://localhost:5173
-
-Backend (API): Acesse http://localhost
-
-Documentação da API: Acesse http://localhost/docs/api
+6.  **Inicie a Fila (Para envio de e-mails):**
+    Em um novo terminal, na raiz do projeto:
+    ```bash
+    ./vendor/bin/sail artisan queue:work
+    ```
 
 ---
 
-## 🧪 Testando a Performance (150k usuários)
+### Opção 2: Rodando Nativamente (Diretamente na Máquina)
 
-- O seeder (`UserSeeder`) gera 150.000 registros com avatares dinâmicos.
-- A busca por Nome ou CPF é indexada — consultas devem ser rápidas (milissegundos) mesmo com grande volume.
-- Para testes de carga adicionais, use ferramentas como `siege`, `wrk` ou `k6` apontando para os endpoints da API.
+Caso prefira rodar sem Docker e já tenha o ambiente configurado.
+
+1.  **Backend (API):**
+    ```bash
+    # Na raiz do projeto
+    cp .env.example .env
+    
+    # Edite o .env e configure suas credenciais de banco (DB_HOST, DB_PASSWORD, etc)
+    
+    composer install
+    php artisan key:generate
+    php artisan migrate
+    
+    # Inicie o servidor
+    php artisan serve
+    # API disponível em http://localhost:8000
+    ```
+
+2.  **Frontend (Vue.js):**
+    ```bash
+    cd frontend
+    cp .env.example .env # configure VITE_API_BASE_URL
+    npm install
+    npm run dev
+    # Frontend disponível em http://localhost:5174 (ou o que foi configurado em sua maquina)
+    ```
+
+3.  **Filas (Essencial para E-mails):**
+    ```bash
+    # Em um terminal separado
+    php artisan queue:work
+    ```
 
 ---
 
-## 📚 Endpoints & Documentação da API
+## Configuração do Google OAuth e E-mail
 
-Se a documentação (Swagger / OpenAPI / Scramble) estiver habilitada, acesse:
-- http://localhost/docs/api
+Para que o login e o envio de e-mails funcionem, você precisa configurar as credenciais no arquivo `.env`.
 
-(Se não estiver instalada, verifique em `api/docs` ou ative a rota de documentação conforme instruções do projeto.)
-
----
-
-## ⚙️ Variáveis de Ambiente Principais
-
-Exemplo resumido do `.env` do backend (não commitá-lo com credenciais reais):
-```env
-APP_NAME=TrayChallenge
-APP_ENV=local
-APP_URL=http://localhost
-
-DB_CONNECTION=mysql
-DB_HOST=mysql
-DB_PORT=3306
-DB_DATABASE=tray
-DB_USERNAME=root
-DB_PASSWORD=secret
-
-REDIS_HOST=redis
-REDIS_PORT=6379
-
+### 1. Google OAuth
+Crie um projeto no Google Cloud Console e obtenha as credenciais.
+```ini
 GOOGLE_CLIENT_ID=seu_client_id_aqui
 GOOGLE_CLIENT_SECRET=seu_client_secret_aqui
-GOOGLE_REDIRECT_URI=http://localhost/api/auth/google/callback
-APP_FRONTEND_URL=http://localhost:5173
+GOOGLE_REDIRECT_URL=http://localhost:8000/api/auth/google/callback 
+
+(ou a url da api que estiver em sua maquina,
+se for pelo sail provavelmente será http://localhost:80/api/auth/google/callback)
 ```
 
-Variáveis frontend (.env.local)
-```env
-VITE_API_BASE_URL=http://localhost/api
-VITE_GOOGLE_CLIENT_ID=seu_client_id_aqui   # se usado no cliente
+### 2. Envio de E-mail (Gmail/SMTP)
+Para testar o envio real, recomenda-se usar uma Senha de App do Gmail ou Mailtrap.
+
 ```
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=seu_email@gmail.com
+MAIL_PASSWORD=sua_senha_de_app
+MAIL_ENCRYPTION=tls
 
+QUEUE_CONNECTION=database
+```
 ---
 
-## ⛑️ Dicas e Troubleshooting
 
-- Erro 500 / problemas de OAuth:
-  - Verifique se o `GOOGLE_REDIRECT_URI` cadastrado no Google Console corresponde exatamente ao que está no `.env`.
-- Problemas com containers:
-  - Rode `./vendor/bin/sail down` e `./vendor/bin/sail up -d` novamente.
-- Seed lento:
-  - Se o seeder for muito pesado localmente, considere reduzir a quantidade para desenvolvimento (ex.: 10k) ou usar máquinas com mais recursos.
+## Decisões de Arquitetura
 
----
+Durante o desenvolvimento, foram adotadas as seguintes práticas para garantir escalabilidade e manutenção:
 
-## Contribuição
+- Service & Repository Pattern:
 
-Contribuições são bem-vindas! Abra uma issue descrevendo a melhoria ou um PR com uma descrição clara das mudanças e testes associados.
+    -  Controllers: Mantidos "magros", responsáveis apenas por receber requisições HTTP e retornar respostas JSON.
 
-Boas práticas:
-- Siga as convenções PSR (backend) e linting/formatting (frontend).
-- Escreva testes para novas funcionalidades.
-- Mantenha o código desacoplado (Service/Repository já adotado como padrão).
+    - Services: Centralizam as regras de negócio (ex: decisão de disparar e-mail após cadastro).
 
----
+    - Repositories: Abstraem a camada de dados, permitindo queries complexas (como a busca híbrida de CPF/Nome) sem poluir o controller.
 
-## Contato
+- Processamento Assíncrono (Queues):
 
-Desenvolvido por: Vitor Henrique P. Araujo
-LinkedIn: https://www.linkedin.com/in/vitor-araujo-5a4910227/
-E-mail: vitor.araujo63@etec.sp.gov.br
+    - O envio de e-mails de boas-vindas é feito através de Jobs e Queues (driver database). Isso garante que a API responda imediatamente ao usuário, sem travamentos enquanto o SMTP processa o envio.
+
+- Autenticação:
+
+    - Optou-se pelo Laravel Socialite devido à sua robustez, segurança e integração nativa com o framework, seguindo os padrões modernos da comunidade Laravel, embora a biblioteca nativa do Google tenha sido considerada.
+
+- Frontend Otimizado:
+
+    - Uso de Pinia para gerenciamento de estado global do usuário.
+
+    - TypeScript para garantir tipagem segura e reduzir bugs em tempo de execução.

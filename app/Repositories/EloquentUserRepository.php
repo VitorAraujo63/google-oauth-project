@@ -48,12 +48,18 @@ class EloquentUserRepository implements UserRepositoryInterface
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('cpf', 'like', "%{$search}%");
+            $numbersOnly = preg_replace('/\D/', '', $search);
+
+            $query->where(function($q) use ($search, $numbersOnly) {
+                if (!empty($numbersOnly) && strlen($numbersOnly) <= 4) {
+                    $q->orWhere('cpf', 'like', "{$numbersOnly}%");
+                }
+
+                $q->orWhere('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
-        return $query->paginate(15);
+        return $query->orderBy('id', 'asc')->paginate(10);
     }
 }
