@@ -36,7 +36,7 @@ class AuthController extends Controller
             return redirect("{$frontendUrl}?token={$token}");
 
         } catch (\Exception $e) {
-            return redirect(config('app.frontend_url').'/login?error=auth_failed');
+            return redirect(config('app.frontend_url').'/?error=auth_failed');
         }
     }
 
