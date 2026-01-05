@@ -217,10 +217,10 @@ Durante o desenvolvimento, foram adotadas as seguintes práticas para garantir e
 
 <img width="2081" height="861" alt="Sem título-2025-04-23-2028" src="https://github.com/user-attachments/assets/d45d5eba-1f72-48af-9426-9943f9b4536e" />
 
-Adicionar uma seção de contribuição demonstra profissionalismo e conhecimento do fluxo de trabalho Git (Git Flow), mesmo que seja um projeto de teste.
+<br>
 
-Aqui está um modelo padrão e elegante para você colar no final do seu README.md:
-
+- Sobre a exibição do e-mail: decidi mantê-lo visível por ora, pois não estava claro se a sensibilidade do dado se equiparava à do CPF. Contudo, sugiro um futuro ajuste no projeto para que o e-mail seja mascarado, garantindo maior segurança.
+  
 ---
 
 ## 🤝 Contribuição
