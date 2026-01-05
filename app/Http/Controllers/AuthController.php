@@ -6,6 +6,8 @@ use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\CompleteRegistrationRequest;
+use App\Http\Resources\UserResource;
+use App\Jobs\SendWelcomeEmailJob;
 
 class AuthController extends Controller
 {
@@ -42,12 +44,15 @@ class AuthController extends Controller
     {
         $user = $this->authService->completeRegistration(
             $request->user(),
-            $request->validated()
+            $validatedData = $request->validated()
         );
 
+        $user->update($validatedData);
+        SendWelcomeEmailJob::dispatch($user);
+
         return response()->json([
-            'message' => 'Registration completed successfully',
-            'user' => $user
+            'message' => 'Cadastro concluído',
+            'user' => new UserResource($user)
         ]);
     }
 }
