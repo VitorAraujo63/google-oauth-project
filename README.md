@@ -17,7 +17,7 @@ Este projeto é uma solução completa Fullstack (API Laravel + Frontend Vue.js)
 
 Para rodar este projeto, você precisa ter instalado em sua máquina:
 
-* **Opção Docker (Recomendada):** Docker e Docker Compose.
+* **Opção Docker (Recomendada):** Docker, Docker Compose e Node.js 20+.
 * **Opção Nativa:** PHP 8.2+, Composer, Node.js 20+, MySQL.
 
 ---
@@ -29,7 +29,7 @@ Você pode escolher rodar via **Docker (Laravel Sail)** ou **Nativamente**.
 
 ### Opção 1: Rodando com Docker (Laravel Sail)
 
-Esta é a forma mais simples, pois não requer PHP/Node instalados na máquina host.
+Esta é a forma mais simples, pois não requer PHP instalados na máquina host, somente o node.js.
 
 1.  **Clone o repositório:**
     ```bash
