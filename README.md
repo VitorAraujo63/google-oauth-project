@@ -1,6 +1,18 @@
-# Tray Fullstack Test - Google OAuth & User Management
+# Fullstack - Google OAuth
 
-Este projeto é uma solução completa Fullstack (API Laravel + Frontend Vue.js) para gerenciamento de usuários com autenticação social via Google, atendendo aos requisitos do teste técnico para Desenvolvedor Full Stack.
+Este projeto é uma solução completa Fullstack (API Laravel + Frontend Vue.js) com autenticação social via Google.
+
+<div align="center">
+
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/vitor-araujo-5a4910227)
+  [![Demo App](https://img.shields.io/badge/Demo-Demo_Online-4CAF50?style=for-the-badge&logo=google-chrome&logoColor=white)](https://app.vitoraraujo.cloud)
+  [![Email](https://img.shields.io/badge/Email-Fale_Comigo-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:vitor.araujo63@etec.sp.gov.br)
+  
+  [![CI/CD Pipeline](https://github.com/VitorAraujo63/google-oauth-project/actions/workflows/deploy.yml/badge.svg)](https://github.com/VitorAraujo63/google-oauth-project/actions)
+
+</div>
+
+---
 
 ## Tecnologias e Arquitetura
 
@@ -63,6 +75,7 @@ Esta é a forma mais simples, pois não requer PHP/Node instalados na máquina h
     ```bash
     ./vendor/bin/sail artisan key:generate
     ./vendor/bin/sail artisan migrate
+    ./vendor/bin/sail artisan db:seed --class=UserSeeder
     ```
 
 5.  **Configure o Frontend:**
@@ -95,6 +108,7 @@ Caso prefira rodar sem Docker e já tenha o ambiente configurado.
     composer install
     php artisan key:generate
     php artisan migrate
+    php artisan db:seed --class=UserSeeder
     
     # Inicie o servidor
     php artisan serve
@@ -174,3 +188,39 @@ Durante o desenvolvimento, foram adotadas as seguintes práticas para garantir e
     - Uso de Pinia para gerenciamento de estado global do usuário.
 
     - TypeScript para garantir tipagem segura e reduzir bugs em tempo de execução.
+
+<br>
+
+- Foi decido que no front-end não deveria ser apresentado o CPF completo, por esse motivo seguiu com a restrição de exibição do mesmo, porém, ainda era possível validar no F12, dando brecha para ser capturado qualquer informação de outros usuarios, contornei isso com UserResource, na qual ele retorna o cpf já mascarado para que não seja divulgado para o front-end e se mantenha os dados privados, conforme apresentado na imagem a seguir:
+
+    <img width="1869" height="928" alt="Design sem nome" src="https://github.com/user-attachments/assets/df9243d4-2153-4379-92b0-d71040eafcc0" />
+
+<br>
+
+- Abaixo é a estrutura inicial pensada e criada no excalidraw para entender o fluxo e seguir com o desenvolvimento a partir disso.
+
+<img width="2081" height="861" alt="Sem título-2025-04-23-2028" src="https://github.com/user-attachments/assets/d45d5eba-1f72-48af-9426-9943f9b4536e" />
+
+Adicionar uma seção de contribuição demonstra profissionalismo e conhecimento do fluxo de trabalho Git (Git Flow), mesmo que seja um projeto de teste.
+
+Aqui está um modelo padrão e elegante para você colar no final do seu README.md:
+
+---
+
+## 🤝 Contribuição
+
+Embora este seja um projeto de avaliação técnica, contribuições e sugestões de melhoria são sempre bem-vindas!
+
+Se você deseja contribuir:
+
+1.  Faça um **Fork** do projeto.
+2.  Crie uma nova Branch para sua funcionalidade (`git checkout -b feature/MinhaNovaFeature`).
+3.  Faça o Commit das suas alterações (`git commit -m 'feat: Adiciona nova funcionalidade'`).
+4.  Faça o Push para a Branch (`git push origin feature/MinhaNovaFeature`).
+5.  Abra um **Pull Request**.
+
+---
+
+<div align="center">
+  Feito com 💜 por <a href="https://www.linkedin.com/in/vitor-araujo-5a4910227">Vitor Araujo</a>
+</div>
